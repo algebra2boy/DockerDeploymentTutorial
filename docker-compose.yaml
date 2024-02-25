@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  docker-python:
+    image: docker-python
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - UVICORN_PORT=8000
