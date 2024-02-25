@@ -3,12 +3,6 @@ FROM python:3.9-alpine
 # Set the working directory in the container
 WORKDIR /app
 
-# Expose port 8000 to allow communication to and from server
-EXPOSE 8000
-
-# Define environment variable
-ENV UVICORN_PORT=8000
-
 # Copy the dependencies file to the working directory
 COPY requirements.txt .
 
