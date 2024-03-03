@@ -1,16 +1,17 @@
-FROM python:3.9-alpine
+FROM node:16
 
-# Set the working directory in the container
-WORKDIR /app
+# Create app directory
+WORKDIR /usr/src/app
 
-# Copy the dependencies file to the working directory
-COPY requirements.txt .
+# Install app dependencies
+COPY package*.json ./
 
-# Install any dependencies
-RUN pip install -r requirements.txt
+RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
 
-# COPY the content of the local src directory to the working directory
+# Bundle app source
 COPY . .
 
-# RUN the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+EXPOSE 8080
+CMD [ "node", "index.js" ]

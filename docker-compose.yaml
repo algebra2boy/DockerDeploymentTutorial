@@ -1,8 +1,0 @@
-version: '3.9'
-
-services:
-  docker-python:
-    image: docker-python
-    build: .
-    ports:
-      - 80:80
