@@ -8,7 +8,7 @@ example: docker image build -t yongye0997/docker_python .
 
 2. Run the container using the docker image create above to test if image works
 ```bash
-docker docker container run --name <container name> -p <local port:container port> <image name>
+docker container run --name <container name> -p <local port:container port> <image name>
 example: docker container run --name fastapi_testing -p 8000:8000 yongye0997/docker_python
 ```
 
