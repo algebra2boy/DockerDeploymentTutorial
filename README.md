@@ -43,21 +43,24 @@ example: az acr create --resource-group api-resource-group --name yongyeapiacr -
 - admin access must be enabled in order to push docker images to ACR
     - If activated, you can use the registry name as username and admin user access key as password to docker login to your container registry.
 
-Step5: Push Docker Image to ACR
+Step5: Push Docker Image to DockerHub or ACR
 - First, authenticate Docker to your container registry, `az acr login --name yongyeapiacr`
 - Second, create a docker image with a tag (optional), default is latest
+- Third, (optional), if you are on M1 chip, you will have to add an additional flag to the following docker build, [`--platform=linux/amd64`](https://github.com/docker/for-mac/issues/6356)
 ```bash
 docker build -t <image name>:<tag> .
 example: docker build -t express-demo:latest .
+M1 chip example: docker image build --platform=linux/amd64 -t express-demo:latest .
 ```
 - Third: Tag your local Docker image with the ACR login server name.
-    - This creates a duplication of the original docker image
+    - This creates a duplication of the original docker image but with the name
 ```bash
 docker tag <image name in step 2> <name of ACR>.azurecr.io/<image name in step 2>
 example: docker tag express-demo:latest yongyeapiacr.azurecr.io/express-demo:latest 
 ```
-- Fourth, push the docker image to ACR
+- Fourth, push the docker image to DockerHub and ACR
 ```bash
+docker push yongye0997/express-demo
 docker push yongyeapiacr.azurecr.io/express-demo
 ```
 - Fifth, check your docker image on Azure Container Registry, you should see a new image called `express-demo`
@@ -69,16 +72,52 @@ az containerapp env create --name <name of container app environment> --resource
 example: az containerapp env create --name expressDemoAppEnv --resource-group api-resource-group --location eastus
 ```
 
-Step7: Create a container App (Last step, but be very careful with this steps)
-- This is where we create our container app and deploy the image from ACR
-- Must use the same name for the resource group and container enviornment
+Step7: Create a container App (Be very careful with this step since it involves with lots of flags)
+- This is where we create our container app and deploy the image from ACR or DockerHub
+- If you using GUI, navigate to your container app > Settings > Ingress after deployment
+    - Have to enable `ingress` to receive traffic
+    - Have to enable `accepting traffic from anywhere` for Ingress traffic
+    - target port must be 8080 for this express app
+- Must use the same name for the resource group and container enviornment from previous steps
 ```bash
-az containerapp create 
---name <name of container app> \
---resource-group <name of resource group> 
---environment myContainerAppEnv --image myContainerRegistry.azurecr.io/myimage:latest --target-port 80 --ingress external --query configuration.ingress.fqdn
+az containerapp create \
+    --name <name of container app> \
+    --resource-group <name of resource group> \
+    --environment <name of container environment> \
+    --image <name of image from the ACR or docker hub> \
+    --target-port <port number> \
+    --ingress external 
 
+Pulling image from Docker Hub example: 
+az containerapp create 
+    --name yongye-express-api-demo-app 
+    --resource-group api-resource-group 
+    --environment expressDemoAppEnv 
+    --image yongye0997s/express-demo:latest 
+    --target-port 8080 
+    --ingress external
+
+Pulling image from ACR example:
+# need to manually specify registry-server, registry-username, or registry-password if authentication is required, link: https://github.com/microsoft/azure-container-apps/issues/863#issuecomment-1669564470
+az containerapp create 
+    --name yongye-express-api-demo-app 
+    --resource-group api-resource-group 
+    --environment expressDemoAppEnv 
+    --image yongyeapiacr.azurecr.io/express-demo:latest 
+    --registry-server yongyeapiacr.azurecr.io
+    --registry-username yongyeapiacr
+    --registry-password <your password>
+    --target-port 8080 
+    --ingress external
 ```
+
+Step8: You should receive an application url on Terminal or Azure container app website.
+My application link is: https://express-api-container.yellowdune-bb83b275.eastus.azurecontainerapps.io/
+- [Home route](https://express-api-container.yellowdune-bb83b275.eastus.azurecontainerapps.io/)
+- [Hello route](https://express-api-container.yellowdune-bb83b275.eastus.azurecontainerapps.io/hello)
+- [Testing route](https://express-api-container.yellowdune-bb83b275.eastus.azurecontainerapps.io/testing)
+
+Step 9: Thank you!
 
 ## Important Commands
 ```bash
