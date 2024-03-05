@@ -112,8 +112,8 @@ az containerapp create
 ```
 
 Step8: You should receive an application url on Terminal or Azure container app website.
-My application link is: https://express-api-container.yellowdune-bb83b275.eastus.azurecontainerapps.io/
-- [Home route](https://express-api-container.yellowdune-bb83b275.eastus.azurecontainerapps.io/)
+My application link is: https://yongye-express-api-demo-app.yellowdune-bb83b275.eastus.azurecontainerapps.io/hello
+- [Home route](https://yongye-express-api-demo-app.yellowdune-bb83b275.eastus.azurecontainerapps.io/)
 - [Hello route](https://express-api-container.yellowdune-bb83b275.eastus.azurecontainerapps.io/hello)
 - [Testing route](https://express-api-container.yellowdune-bb83b275.eastus.azurecontainerapps.io/testing)
 
